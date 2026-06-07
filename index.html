@@ -1,88 +1,124 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seekly - умный поиск</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seekly Phone Finder</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+  margin: 0;
+}
 
-    .container {
-      margin-top: 120px;
-    }
+h1 {
+  color: #38bdf8;
+  margin-top: 50px;
+}
 
-    h1 {
-      font-size: 40px;
-      color: #38bdf8;
-    }
+input {
+  width: 85%;
+  max-width: 500px;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
 
-    input {
-      width: 80%;
-      max-width: 500px;
-      padding: 15px;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-      outline: none;
-    }
+button {
+  margin-top: 10px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #38bdf8;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    button {
-      padding: 15px 25px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 10px;
-      background: #38bdf8;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.card {
+  background: #1e293b;
+  margin: 10px auto;
+  padding: 15px;
+  width: 85%;
+  max-width: 600px;
+  border-radius: 10px;
+  text-align: left;
+}
 
-    button:hover {
-      background: #0ea5e9;
-    }
+.company {
+  color: #38bdf8;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
 
-    .footer {
-      margin-top: 80px;
-      font-size: 12px;
-      opacity: 0.6;
-    }
-  </style>
+.phone {
+  opacity: 0.9;
+}
+
+</style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>Seekly</h1>
-    <p>Умный поиск по интернету</p>
+<h1>Seekly Phone Finder 📱</h1>
 
-    <input type="text" id="search" placeholder="Введите запрос...">
+<input id="search" placeholder="Введите бренд или букву...">
+<br>
+<button onclick="searchPhones()">Поиск</button>
 
-    <br>
+<div id="results"></div>
 
-    <button onclick="search()">Искать</button>
+<script>
 
-    <div class="footer">
-      Seekly © 2026
-    </div>
-  </div>
+// 📱 БАЗА ТЕЛЕФОНОВ (можно расширять)
+const phones = [
+  {company: "Apple", ru: "Эпл", models: ["iPhone 15", "iPhone 14", "iPhone 13"]},
+  {company: "Samsung", ru: "Самсунг", models: ["Galaxy S24", "Galaxy S23", "A55"]},
+  {company: "Xiaomi", ru: "Сяоми", models: ["14 Pro", "13T", "Redmi Note 13"]},
+  {company: "HONOR", ru: "Хонор", models: ["Magic6", "X9b", "70"]},
+  {company: "Poco", ru: "Поко", models: ["X6 Pro", "M6 Pro", "F5"]}
+];
 
-  <script>
-    function search() {
-      let query = document.getElementById("search").value;
-      if (!query) return;
+// 🔍 поиск
+function searchPhones() {
+  let input = document.getElementById("search").value.toLowerCase();
+  let results = document.getElementById("results");
+  results.innerHTML = "";
 
-      let url = "https://www.google.com/search?q=" + encodeURIComponent(query);
-      window.open(url, "_blank");
-    }
-  </script>
+  if (!input) return;
+
+  let found = phones.filter(p =>
+    p.company.toLowerCase().includes(input) ||
+    p.ru.toLowerCase().includes(input) ||
+    input.length === 1 // даже 1 буква
+  );
+
+  if (found.length === 0) {
+    results.innerHTML = "<p>Ничего не найдено</p>";
+    return;
+  }
+
+  found.forEach(p => {
+    let div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <div class="company">${p.company} / ${p.ru}</div>
+      <div class="phone">📱 Модели:</div>
+      <ul>
+        ${p.models.map(m => `<li>${m}</li>`).join("")}
+      </ul>
+    `;
+
+    results.appendChild(div);
+  });
+}
+
+</script>
 
 </body>
 </html>
