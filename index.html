@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seekly - умный поиск</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      margin-top: 120px;
+    }
+
+    h1 {
+      font-size: 40px;
+      color: #38bdf8;
+    }
+
+    input {
+      width: 80%;
+      max-width: 500px;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      padding: 15px 25px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #38bdf8;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    .footer {
+      margin-top: 80px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Seekly</h1>
+    <p>Умный поиск по интернету</p>
+
+    <input type="text" id="search" placeholder="Введите запрос...">
+
+    <br>
+
+    <button onclick="search()">Искать</button>
+
+    <div class="footer">
+      Seekly © 2026
+    </div>
+  </div>
+
+  <script>
+    function search() {
+      let query = document.getElementById("search").value;
+      if (!query) return;
+
+      let url = "https://www.google.com/search?q=" + encodeURIComponent(query);
+      window.open(url, "_blank");
+    }
+  </script>
+
+</body>
+</html>
