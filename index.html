@@ -3,35 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seekly Phone Finder</title>
+<title>Seekly PRO Phone Finder</title>
 
 <style>
 body {
   font-family: Arial;
   background: #0f172a;
   color: white;
-  text-align: center;
   margin: 0;
+  text-align: center;
 }
 
-h1 {
-  color: #38bdf8;
-  margin-top: 50px;
-}
+h1 { color: #38bdf8; margin-top: 20px; }
 
-input {
+input, select {
   width: 85%;
   max-width: 500px;
-  padding: 15px;
-  font-size: 16px;
+  padding: 12px;
+  margin: 5px;
   border-radius: 10px;
   border: none;
   outline: none;
 }
 
 button {
-  margin-top: 10px;
-  padding: 12px 20px;
+  padding: 10px 15px;
+  margin: 5px;
   border-radius: 10px;
   border: none;
   background: #38bdf8;
@@ -43,80 +40,130 @@ button {
   background: #1e293b;
   margin: 10px auto;
   padding: 15px;
-  width: 85%;
+  width: 90%;
   max-width: 600px;
   border-radius: 10px;
   text-align: left;
 }
 
-.company {
-  color: #38bdf8;
-  font-size: 18px;
-  margin-bottom: 5px;
-}
+.title { color: #38bdf8; }
 
-.phone {
-  opacity: 0.9;
-}
-
+small { opacity: 0.8; }
 </style>
 </head>
 
 <body>
 
-<h1>Seekly Phone Finder 📱</h1>
+<h1>Seekly PRO 📱</h1>
 
-<input id="search" placeholder="Введите бренд или букву...">
+<input id="search" placeholder="Бренд или буква...">
+
+<select id="filter">
+  <option value="all">Все</option>
+  <option value="budget">Бюджет</option>
+  <option value="camera">Камера</option>
+  <option value="flagship">Флагман</option>
+</select>
+
 <br>
+
 <button onclick="searchPhones()">Поиск</button>
+<button onclick="sortCheap()">Самый дешёвый</button>
+<button onclick="sortExpensive()">Самый дорогой</button>
+<button onclick="sortMid()">Средний</button>
+<button onclick="aiHelp()">AI помощник 🤖</button>
 
 <div id="results"></div>
 
 <script>
 
-// 📱 БАЗА ТЕЛЕФОНОВ (можно расширять)
+// 📱 БАЗА (цены добавлены)
 const phones = [
-  {company: "Apple", ru: "Эпл", models: ["iPhone 15", "iPhone 14", "iPhone 13"]},
-  {company: "Samsung", ru: "Самсунг", models: ["Galaxy S24", "Galaxy S23", "A55"]},
-  {company: "Xiaomi", ru: "Сяоми", models: ["14 Pro", "13T", "Redmi Note 13"]},
-  {company: "HONOR", ru: "Хонор", models: ["Magic6", "X9b", "70"]},
-  {company: "Poco", ru: "Поко", models: ["X6 Pro", "M6 Pro", "F5"]}
+  {name:"iPhone 15", brand:"Apple", price:1200, type:"flagship", camera:9},
+  {name:"iPhone 13", brand:"Apple", price:700, type:"camera", camera:8},
+
+  {name:"Galaxy S24", brand:"Samsung", price:1100, type:"flagship", camera:9},
+  {name:"Galaxy A55", brand:"Samsung", price:350, type:"budget", camera:7},
+
+  {name:"Xiaomi 14", brand:"Xiaomi", price:900, type:"flagship", camera:8},
+  {name:"Redmi Note 13", brand:"Xiaomi", price:200, type:"budget", camera:6},
+
+  {name:"HONOR 70", brand:"HONOR", price:400, type:"budget", camera:7}
 ];
+
+let currentList = phones;
 
 // 🔍 поиск
 function searchPhones() {
-  let input = document.getElementById("search").value.toLowerCase();
-  let results = document.getElementById("results");
-  results.innerHTML = "";
+  let q = document.getElementById("search").value.toLowerCase();
+  let f = document.getElementById("filter").value;
 
-  if (!input) return;
-
-  let found = phones.filter(p =>
-    p.company.toLowerCase().includes(input) ||
-    p.ru.toLowerCase().includes(input) ||
-    input.length === 1 // даже 1 буква
+  currentList = phones.filter(p =>
+    (p.name.toLowerCase().includes(q) ||
+     p.brand.toLowerCase().includes(q) ||
+     q.length === 1) &&
+    (f === "all" || p.type === f)
   );
 
-  if (found.length === 0) {
-    results.innerHTML = "<p>Ничего не найдено</p>";
-    return;
-  }
+  show(currentList);
+}
 
-  found.forEach(p => {
+// 💰 самый дешёвый
+function sortCheap(){
+  let sorted = [...currentList].sort((a,b)=>a.price-b.price);
+  show(sorted.slice(0,3));
+}
+
+// 💰 самый дорогой
+function sortExpensive(){
+  let sorted = [...currentList].sort((a,b)=>b.price-a.price);
+  show(sorted.slice(0,3));
+}
+
+// 📊 средний
+function sortMid(){
+  let sorted = [...currentList].sort((a,b)=>Math.abs(800-a.price)-Math.abs(800-b.price));
+  show(sorted.slice(0,3));
+}
+
+// 🤖 AI помощник (простая логика)
+function aiHelp(){
+  let msg = "";
+
+  let cheap = phones.reduce((a,b)=>a.price<b.price?a:b);
+  let expensive = phones.reduce((a,b)=>a.price>b.price?a:b);
+  let bestCamera = phones.reduce((a,b)=>a.camera>b.camera?a:b);
+
+  msg += "📊 Рекомендации Seekly AI:\\n\\n";
+  msg += "💰 Самый дешёвый: " + cheap.name + " ($" + cheap.price + ")\\n";
+  msg += "🔥 Самый дорогой: " + expensive.name + " ($" + expensive.price + ")\\n";
+  msg += "📸 Лучшая камера: " + bestCamera.name + "\\n";
+
+  alert(msg);
+}
+
+// 📦 показать
+function show(list){
+  let res = document.getElementById("results");
+  res.innerHTML = "";
+
+  list.forEach(p=>{
     let div = document.createElement("div");
-    div.className = "card";
+    div.className="card";
 
     div.innerHTML = `
-      <div class="company">${p.company} / ${p.ru}</div>
-      <div class="phone">📱 Модели:</div>
-      <ul>
-        ${p.models.map(m => `<li>${m}</li>`).join("")}
-      </ul>
+      <div class="title">${p.name}</div>
+      <small>${p.brand}</small><br><br>
+      💰 Цена: $${p.price}<br>
+      📸 Камера: ${p.camera}/10<br>
+      🏷 Тип: ${p.type}
     `;
 
-    results.appendChild(div);
+    res.appendChild(div);
   });
 }
+
+show(phones);
 
 </script>
 
